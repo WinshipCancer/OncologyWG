@@ -1,3 +1,11 @@
+Emory Notes
+------------
+1. option of file location, local or s3? 
+2. update deprecated  options/function ( (bulkLoad instead of useMppBulkLoad)
+3. add a couple of more parameters to optimize the function databaseSchema and tableName to insertTable().
+4. add ddl template (either in the main function, or small function, or as a ref table ...)
+5. ret_df is not used anywhere, need to be removed
+
 NaaccrParser
 ------------
 
