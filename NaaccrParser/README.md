@@ -1,5 +1,4 @@
-Emory Notes
-------------
+# Emory Notes
 1. option of file location, local or s3? 
 2. update deprecated  options/function ( (bulkLoad instead of useMppBulkLoad)
 3. add a couple of more parameters to optimize the function databaseSchema and tableName to insertTable().
