@@ -95,8 +95,7 @@ NAACCR_to_df <- function(file_path = "",
   
   curr <- cbind(curr, record_index)
   
-  #for (i in 1:nrow(curr)){
-    for (i in 8:10){
+  for (i in 1:nrow(curr)){
     curr_row <- curr[i,]
     
     tmp_df <- data.frame(matrix(nrow= nrow(record_layout), ncol = length(col_nms)))
