@@ -35,9 +35,7 @@ NAACCR_to_df <- function(file_path = "",
                          s3_bucket = "",
                          s3_file = "",
                          use_full_data = TRUE){
-  col_nms <- c("person_id","record_id","mrn","histology_site",
-              "naaccr_item_number","naaccr_item_name","naaccr_item_value")
-  
+  col_nms <- c("person_id","record_id","mrn","histology_site", "naaccr_item_number","naaccr_item_name","naaccr_item_value")
   out <- data.frame(matrix(nrow= 0, ncol = length(col_nms)))
   names(out) <- col_nms
   
@@ -50,16 +48,13 @@ NAACCR_to_df <- function(file_path = "",
     }
     cat("please make sure you are connected to S3 bucket.")
     cat("\n")
-    
     fl <- s3read_using(FUN = readLines,
                        bucket = s3_bucket,
                        object = s3_file)
     
     wid <- unique(nchar(fl))
     curr <- fl %>% data.frame()
-    
     naaccr_version <- substr(fl[1], 17,19)
-    
   } else {
     naaccr_version <- substr(readLines(file_path, n=1), 17,19)
     # Get file width
@@ -97,14 +92,12 @@ NAACCR_to_df <- function(file_path = "",
   
   for (i in 1:nrow(curr)){
     curr_row <- curr[i,]
-    
     tmp_df <- data.frame(matrix(nrow= nrow(record_layout), ncol = length(col_nms)))
     names(tmp_df) <- col_nms
     
     # loop through Get all (naaccr_item_number, naaccr_item_value) pairs
     for(j in 1:nrow(record_layout)){
       curr_item <- record_layout[j,]
-      
       tmp_df$naaccr_item_number[j] <- curr_item$Item_Num
       tmp_df$naaccr_item_name[j] <- curr_item$Item_Name
       tmp_df$naaccr_item_value[j] <- trimws(substr(curr_row$raw, curr_item$col_start, curr_item$col_end))
@@ -116,26 +109,23 @@ NAACCR_to_df <- function(file_path = "",
     dxDate <- tmp_df$naaccr_item_value[tmp_df$naaccr_item_number == 390]
     
     tmp_df <- tmp_df %>%
-      mutate(record_id = curr_row$record_index,
-             mrn = naaccr_item_value[tmp_df$naaccr_item_number == 2300],
-             histology_site = paste0(substr(hist3, 0, 4),"/",substr(hist3, 5, 6),"-",substr(site, 0,3),".",substr(site, 4,5)),
-             person_id = NA) %>%
-               filter(nchar(naaccr_item_value) > 0) %>% # Remove empty fields %>%
-    select(all_of(col_nms))
+              mutate(record_id = curr_row$record_index,
+                     mrn = naaccr_item_value[tmp_df$naaccr_item_number == 2300],
+                     histology_site = paste0(substr(hist3, 0, 4),"/",substr(hist3, 5, 6),"-",substr(site, 0,3),".",substr(site, 4,5)),
+                     person_id = NA) %>%
+                       filter(nchar(naaccr_item_value) > 0) %>% # Remove empty fields 
+              select(all_of(col_nms))
     
     if(!use_full_data) {
        tmp_df <- tmp_df %>%
-         filter(nchar(hist3) > 3 & nchar(site) > 3 & nchar(dxDate) > 7)
+                  filter(nchar(hist3) > 3 & nchar(site) > 3 & nchar(dxDate) > 7)
     }
     
     if(nrow(tmp_df) > 0) {
       out <- rbind(out,tmp_df)
     }
-    
-    }
-  
+  }
   return(out)
-
 }
 #****** end of the function ******#
 
